@@ -34,14 +34,15 @@ paths:
             schema:
               $ref: "#/components/schemas/GraphQLRequest"
             examples:
-              getProjectTokenInfo:
-                summary: Get project token info
+              checkAuth:
+                summary: Check Railway Bearer token auth
                 value:
                   query: |
                     query {
-                      projectToken {
-                        projectId
-                        environmentId
+                      me {
+                        id
+                        name
+                        email
                       }
                     }
                   variables: {}
