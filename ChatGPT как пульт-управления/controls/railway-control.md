@@ -8,7 +8,7 @@ Action schema in repo:
 Architecture:
 ```mermaid
 flowchart LR
-  GPT[Custom GPT] -->|GPT Action auth: Project-Access-Token / Bearer| B[backboard.railway.com/graphql/v2]
+  GPT[Custom GPT] -->|GPT Action auth: Authorization Bearer Railway token| B[backboard.railway.com/graphql/v2]
   B -->|GraphQL| R[Railway Public API]
   R --> P[Projects]
   R --> S[Services]
