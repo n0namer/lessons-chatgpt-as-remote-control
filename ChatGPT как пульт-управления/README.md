@@ -1,224 +1,170 @@
-# ChatGPT как пульт-управления
+# ChatGPT как пульт-управления n8n
 
-Короткая операционная инструкция к уроку: как из Custom GPT сделать пульт управления внешними сервисами на примере n8n через GPT Actions, Railway, `mcpo` и `n8n-mcp`.
+Единая инструкция. Читать этот файл как главный сценарий настройки. Старые вспомогательные файлы в репозитории — справка, но пользователю достаточно идти по этому README.
 
-> Статус: черновик runbook на основе транскрипции и runtime-проверок.  
-> Главная цель: не пересказать урок, а зафиксировать порядок настройки, схему авторизации и места, где нельзя перепутать ключи.
-
-## 1. Идея урока
-
-ChatGPT сам по себе уже может быть пультом управления сервисами, если у сервиса есть API или готовый коннектор. Для сервисов без готового ChatGPT-коннектора можно использовать **Custom GPT + Actions**.
-
-В этом уроке целевой сервис — **n8n**.  
-Задача: дать Custom GPT возможность читать, валидировать и безопасно редактировать n8n workflows.
-
-## 2. Рабочая архитектура
+## 1. Целевая архитектура
 
 ```mermaid
 flowchart LR
-    U[Пользователь] --> GPT[Custom GPT / GPTS]
-    GPT -->|GPT Actions: HTTPS + Bearer bridge token| MCPO[mcpo / OpenAPI REST фасад на Railway]
-    MCPO -->|MCP tool calls| N8NMCP[n8n-mcp / приватный backend]
-    N8NMCP -->|X-N8N-API-KEY из Railway env| N8N[n8n instance на Railway]
-    N8N --> WF[n8n workflows]
-
-    GPT -. Railway Action: Bearer Railway token .-> RAILWAY[Railway API / GraphQL]
-    RAILWAY -. deploy/read logs/env names .-> MCPO
-    RAILWAY -. deploy/read logs/env names .-> N8NMCP
-
-    subgraph Secrets[Разные ключи, не путать]
-      RK[Railway API token]
-      BT[Bridge token: MCP_AUTH_TOKEN/AUTH_TOKEN]
-      NK[n8n API key: N8N_API_KEY]
-    end
-
-    RK -. только для GPT Action к Railway .-> RAILWAY
-    BT -. только для внешнего входа GPT Action в bridge .-> MCPO
-    NK -. только server-side в Railway env .-> N8NMCP
+  U[Человек] --> GPT[Custom GPT]
+  GPT -->|Action 1: Bearer Railway token| R[Railway API]
+  R --> N8NMCP[n8n-mcp: private MCP backend]
+  R --> MCPO[mcpo: public OpenAPI facade]
+  GPT -->|Action 2: Bearer bridge token| MCPO
+  MCPO -->|MCP + private MCP token| N8NMCP
+  N8NMCP -->|N8N_API_KEY server-side| N8N[n8n API]
+  N8N --> WF[n8n workflows]
 ```
 
-Файл со схемой отдельно: [`assets/architecture.mmd`](./assets/architecture.mmd).
+Главное правило: `N8N_API_KEY` никогда не вставляется в GPT Actions. GPT Action для `mcpo` получает только отдельный bridge token.
 
-## 3. Компоненты
+## 2. Upstream-источники
 
-| Компонент | Где живёт | Зачем нужен |
+| Компонент | Откуда брать | Назначение |
 |---|---|---|
-| Custom GPT / GPTS | ChatGPT | Интерфейс пользователя, инструкции, GPT Actions |
-| GPT Actions | В настройках Custom GPT | HTTP-вызовы во внешние сервисы по OpenAPI schema |
-| Railway Action | В Custom GPT | Дать GPT возможность управлять Railway через API/GraphQL |
-| Railway | Отдельный хостинг сервисов | Поднять bridge, `mcpo`, `n8n-mcp`, смотреть логи и env |
-| `mcpo` | Railway service | Публичный OpenAPI/REST фасад поверх MCP |
-| `n8n-mcp` | Railway service / backend | MCP-сервер, который умеет работать с n8n |
-| n8n | Railway или другой хостинг | Целевой automation-сервис и workflows |
+| `n8n-mcp` | `https://github.com/czlonkowski/n8n-mcp` | MCP backend для n8n docs, validation, workflow management |
+| n8n-mcp Railway template | `https://railway.com/deploy/n8n-mcp` | быстрый deploy на Railway |
+| Docker image n8n-mcp | `ghcr.io/czlonkowski/n8n-mcp-railway:latest` или `ghcr.io/czlonkowski/n8n-mcp:latest` | образ сервиса; в production лучше фиксировать version tag |
+| `mcpo` | `https://github.com/open-webui/mcpo` | MCP → OpenAPI/REST proxy для GPT Actions |
+| Docker image mcpo | `ghcr.io/open-webui/mcpo:main` | образ публичного фасада |
+| Railway variables | `https://docs.railway.com/variables` | где указывать env/secrets |
+| GPT Actions auth | `https://developers.openai.com/api/docs/actions/authentication` | где выбрать API Key / Bearer |
 
-## 4. Ключи и авторизация: не путать
+## 3. Ключи: что где создаётся и куда вставляется
 
-В уроке опасное место — слово “API key”. На самом деле есть разные ключи.
+| Ключ | Где создаётся | Куда вставлять | Кто использует |
+|---|---|---|---|
+| Railway API token | Railway → Account Settings → Tokens | GPT Action для Railway | GPT читает/создаёт Railway projects/services/env |
+| Bridge token / `MCPO_API_KEY` | генерируем сами, например `openssl rand -base64 32` | Railway Variables у `mcpo` и GPT Action для `mcpo` | GPT вызывает публичный `mcpo` |
+| Private MCP token / `AUTH_TOKEN` | генерируем сами | Railway Variables у `n8n-mcp`; также у `mcpo` как `N8N_MCP_AUTH_TOKEN` | `mcpo` вызывает приватный `n8n-mcp` |
+| n8n API key / `N8N_API_KEY` | n8n UI → Settings → n8n API → Create API Key | только Railway Variables у `n8n-mcp` | `n8n-mcp` вызывает n8n API |
 
-### 4.1 Railway API token
+Запреты: не писать значения ключей в README, transcript, chat, screenshots. Не вставлять `N8N_API_KEY` в GPT Actions.
 
-**Назначение:** дать Custom GPT доступ к Railway API.
+## 4. Railway service: `n8n-mcp`
 
-- Где взять: Railway → Account Settings → Tokens.
-- Куда вставить: в GPT Action для Railway.
-- Auth type: API key / Bearer.
-- Для чего: создавать проекты, сервисы, читать logs/env/deployments.
-- Не является: не n8n API key и не bridge token.
-
-### 4.2 Bridge token
-
-**Назначение:** защитить публичный endpoint, чтобы посторонний человек не вызвал bridge с улицы.
-
-- Где хранить: Railway variables у публичного bridge/`mcpo`/`n8n-control-mcp` сервиса.
-- Возможные имена переменных:
-  - `MCP_AUTH_TOKEN`
-  - `AUTH_TOKEN`
-  - `OPERATOR_API_KEY`
-  - `OPERATOR_API_KEYS`
-- Куда вставить: в GPT Action, который вызывает bridge.
-- Обычно используется как: `Authorization: Bearer <bridge_token>`.
-
-### 4.3 n8n API key
-
-**Назначение:** дать backend-сервису право обращаться к n8n API.
-
-- Где взять: n8n UI → Settings → n8n API → Create API Key.
-- Где хранить: Railway variables backend-сервиса.
-- Имя переменной: `N8N_API_KEY`.
-- Как используется: только server-side.
-- HTTP header к n8n: `X-N8N-API-KEY`.
-
-**Жёсткое правило:**
+Где переменные:
 
 ```text
-N8N_API_KEY нельзя вставлять в GPT Actions.
-GPT Action получает только bridge token.
-N8N_API_KEY остаётся внутри Railway env у backend-сервиса.
+Railway → Project → service n8n-mcp → Variables
 ```
 
-## 5. Порядок настройки с нуля
-
-### Шаг 1. Создать Custom GPT
-
-1. Открыть ChatGPT → Explore GPTs / My GPTs.
-2. Нажать Create.
-3. Дать имя, например: `n8n MCP оператор`.
-4. Добавить краткую инструкцию: GPT должен работать как оператор n8n, сначала читать и валидировать, а изменения делать только после подтверждения.
-
-### Шаг 2. Добавить Railway Action
-
-1. В GPT → Configure → Actions → Create new action.
-2. Вставить OpenAPI schema для Railway GraphQL Action.
-3. Выбрать auth type: API key / Bearer.
-4. Вставить Railway API token.
-5. Сделать read-only smoke test: попросить GPT прочитать проекты/сервисы Railway.
-
-### Шаг 3. Поднять bridge на Railway
-
-Целевая идея:
-
-```text
-Railway project
-  ├─ service: n8n-mcp
-  └─ service: mcpo / public OpenAPI facade
-```
-
-`n8n-mcp` работает как приватный backend, который знает `N8N_API_KEY`.  
-`mcpo` работает как публичный HTTP/OpenAPI фасад, который защищён bridge token.
-
-### Шаг 4. Настроить Railway variables
-
-Минимальный набор переменных:
+Минимальные variables:
 
 ```env
+AUTH_TOKEN=<private_mcp_token>
+MCP_MODE=http
+USE_FIXED_HTTP=true
+NODE_ENV=production
+LOG_LEVEL=info
+TRUST_PROXY=1
+CORS_ORIGIN=*
+HOST=0.0.0.0
 N8N_API_URL=https://<your-n8n-domain>
 N8N_API_KEY=<masked>
-MCP_MODE=http
-MCP_AUTH_TOKEN=<masked>
-AUTH_TOKEN=<masked>
+```
+
+Нюансы:
+
+- В некоторых сборках вместо/рядом с `AUTH_TOKEN` встречается `MCP_AUTH_TOKEN`. Если есть оба имени, ставить одинаковое значение.
+- `AUTH_TOKEN` защищает `n8n-mcp`; это не n8n API key.
+- `N8N_API_KEY` берётся только в n8n UI и остаётся только server-side в Railway.
+
+## 5. Railway service: `mcpo`
+
+Где переменные:
+
+```text
+Railway → Project → service mcpo → Variables
+```
+
+Variables:
+
+```env
+MCPO_API_KEY=<bridge_token>
+N8N_MCP_URL=https://<n8n-mcp-service-domain>/mcp
+N8N_MCP_AUTH_TOKEN=<same_as_n8n_mcp_AUTH_TOKEN>
 NODE_ENV=production
 ```
 
-Значения секретов не коммитить и не вставлять в учебные материалы.
+Команда запуска `mcpo` для HTTP/streamable MCP endpoint:
 
-### Шаг 5. Сгенерировать OpenAPI schema для GPT Action
-
-1. Получить OpenAPI endpoints от `mcpo`.
-2. Вставить schema в GPT Action.
-3. В Action auth указать bridge token, а не `N8N_API_KEY`.
-4. Проверить endpoints в UI Actions.
-
-### Шаг 6. Smoke test
-
-Безопасный первый тест:
-
-```text
-Покажи список n8n workflows.
+```bash
+uvx mcpo \
+  --host 0.0.0.0 \
+  --port ${PORT:-8000} \
+  --api-key "$MCPO_API_KEY" \
+  --server-type streamable-http \
+  --header "{\"Authorization\":\"Bearer $N8N_MCP_AUTH_TOKEN\"}" \
+  -- "$N8N_MCP_URL"
 ```
 
-Ожидаемый результат: GPT вызывает bridge, bridge вызывает n8n-mcp, n8n-mcp получает список workflows из n8n.
+Docker-вариант:
 
-## 6. Порядок безопасной работы с n8n workflows
+```bash
+docker run -p 8000:8000 ghcr.io/open-webui/mcpo:main \
+  --api-key "top-secret" \
+  --server-type streamable-http \
+  --header '{"Authorization":"Bearer token"}' \
+  -- https://your-n8n-mcp.up.railway.app/mcp
+```
 
-1. Сначала read-only:
-   - list workflows;
-   - get workflow;
-   - validate workflow;
-   - explain warnings.
-2. Затем propose patch:
-   - GPT предлагает изменения;
-   - показывает риски;
-   - показывает rollback.
-3. Только после подтверждения:
-   - apply patch;
-   - validate;
-   - readback;
-   - smoke test.
-4. Нельзя писать `DONE`, пока нет:
-   - evidence;
-   - validator PASS;
-   - readback;
-   - smoke/test;
-   - rollback или `rollback_not_required`.
+Railway-нюанс: публичным должен быть `mcpo`, а не голый `n8n-mcp`. Между `mcpo` и `n8n-mcp` лучше использовать private domain/network, если доступно.
 
-## 7. Known issues и recovery
+## 6. Пошаговая настройка человеком и GPT
 
-### 7.1 `Session terminated`
+1. Человек создаёт Custom GPT.
+2. Человек добавляет Railway Action.
+3. В Railway Action вставляется Railway API token.
+4. GPT проверяет Railway read-only: проекты, сервисы, права.
+5. GPT предлагает план deploy двух сервисов: `n8n-mcp` и `mcpo`.
+6. Человек подтверждает deploy.
+7. GPT поднимает или проверяет сервисы на Railway.
+8. Человек создаёт `N8N_API_KEY` в n8n UI.
+9. `N8N_API_KEY` кладётся только в Railway Variables сервиса `n8n-mcp`.
+10. Человек создаёт bridge token.
+11. Bridge token кладётся в Railway Variables сервиса `mcpo` как `MCPO_API_KEY`.
+12. Человек добавляет второй GPT Action для `mcpo`.
+13. В Action для `mcpo` вставляется только bridge token.
+14. GPT делает read-only smoke test: `list workflows`.
+15. Только после этого разрешаются validate/propose patch/apply.
 
-Не считать это сразу поломкой n8n.
+## 7. Smoke tests
 
-Порядок диагностики:
+Railway:
 
-1. Проверить health bridge.
-2. Проверить, что Railway service не перезапускается.
-3. Проверить `authTokenConfigured=true`.
-4. Проверить target n8n API connection.
-5. Проверить, не истёк ли внешний bridge token.
-6. Не делать повторную mutation без readback.
+```text
+Проверь, что project и оба service существуют, running, и в Variables есть нужные имена. Значения секретов не выводи.
+```
 
-### 7.2 Ошибки авторизации
+n8n-mcp:
 
-Проверить, какой именно ключ используется:
+```text
+Проверь health, MCP_MODE=http, auth token configured, N8N_API_URL configured, N8N_API_KEY configured masked, target n8n API connected.
+```
 
-| Ошибка | Вероятная причина |
-|---|---|
-| GPT Action получает 401 | Неверный bridge token в GPT Action |
-| Bridge не может читать workflows | Неверный или отсутствующий `N8N_API_KEY` |
-| GPT не видит Railway | Неверный Railway API token |
-| Внешний endpoint доступен без auth | Не настроен `MCP_AUTH_TOKEN` / `AUTH_TOKEN` |
+mcpo:
 
-## 8. Что не выкладывать в репозиторий
+```text
+Проверь OpenAPI schema/docs, --api-key, 401/403 без token и 200 с bridge token.
+```
 
-- Значения `N8N_API_KEY`.
-- Значения Railway API token.
-- Значения `MCP_AUTH_TOKEN`, `AUTH_TOKEN`, `OPERATOR_API_KEY`.
-- Полные логи с секретами.
-- Screenshots, где видны ключи.
-- Production webhook URLs, если они не должны быть публичными.
+n8n:
 
-## 9. Что ещё нужно подтвердить в реальной внутрянке
+```text
+Покажи список n8n workflows. Ничего не редактируй.
+```
 
-Эти пункты нельзя выдумывать из транскрипции:
+## 8. Режимы работы с workflows
+
+- `read-only`: list/get/validate/explain.
+- `propose patch`: план, diff, риски, rollback.
+- `apply after approval`: patch, validate, readback, smoke test, evidence.
+- `dangerous approval`: credentials, secrets, env, deploy/restart, delete/disable production.
+
+`DONE` можно писать только после evidence + validator PASS + readback + smoke test.
+
+## 9. Что ещё надо подтвердить в реальной внутрянке
 
 ```yaml
 Railway:
@@ -226,24 +172,13 @@ Railway:
   service_n8n_mcp_name: NEEDS_DISCOVERY
   service_mcpo_name: NEEDS_DISCOVERY
   actual_start_command: NEEDS_DISCOVERY
-  cpu_memory_limits: NEEDS_DISCOVERY
   deployment_source_repo: NEEDS_DISCOVERY
 
 GPT Actions:
   railway_action_schema_file: NEEDS_FILE
-  n8n_bridge_action_schema_file: NEEDS_FILE
+  mcpo_action_schema_file: NEEDS_GENERATE_AFTER_MCPO_DEPLOY
   actual_auth_header_name: NEEDS_DISCOVERY
 
 n8n:
-  target_instance_url: CONFIRMED_IN_RUNTIME_BUT_MASK_FOR_PUBLIC_DOCS
   workflows_count_observed: 285
 ```
-
-## 10. Мини-скрипт объяснения для урока
-
-> Мы не подключаем ChatGPT напрямую к n8n API.  
-> Мы делаем безопасную прокладку.  
-> ChatGPT вызывает публичный bridge с отдельным Bearer token.  
-> Bridge на Railway вызывает `n8n-mcp`.  
-> А уже `n8n-mcp` ходит в n8n с внутренним `N8N_API_KEY`.  
-> Поэтому n8n API key не попадает в GPT Actions и не раскрывается наружу.
