@@ -1,0 +1,2512 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "n8n-documentation-mcp",
+    "description": "n8n-documentation-mcp MCP Server",
+    "version": "2.56.0"
+  },
+  "paths": {
+    "/tools_documentation": {
+      "post": {
+        "summary": "Tools Documentation",
+        "description": "Get documentation for n8n MCP tools. Call without parameters for quick start guide. Use topic parameter to get documentation for specific tools. Use depth='full' for comprehensive documentation.",
+        "operationId": "tool_tools_documentation_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/tools_documentation_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool Tools Documentation Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/search_nodes": {
+      "post": {
+        "summary": "Search Nodes",
+        "description": "Search n8n nodes by keyword with optional real-world examples. Pass query as string. Example: query=\"webhook\" or query=\"database\". Returns max 20 results. Use includeExamples=true to get top 2 template configs per node.",
+        "operationId": "tool_search_nodes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/search_nodes_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool Search Nodes Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_node": {
+      "post": {
+        "summary": "Get Node",
+        "description": "Get node info with progressive detail levels and multiple modes. Detail: minimal (~200 tokens), standard (~1-2K, default), full (~3-8K). Modes: info (default), docs (markdown documentation), search_properties (find properties), versions/compare/breaking/migrations (version inf...",
+        "operationId": "tool_get_node_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/get_node_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool Get Node Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/validate_node": {
+      "post": {
+        "summary": "Validate Node",
+        "description": "Validate n8n node configuration. Use mode='full' for comprehensive validation with errors/warnings/suggestions, mode='minimal' for quick required fields check. Example: nodeType=\"nodes-base.slack\", config={resource:\"channel\",operation:\"create\"}",
+        "operationId": "tool_validate_node_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/validate_node_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/validate_node_response_model"
+                    },
+                    {}
+                  ],
+                  "title": "Response Tool Validate Node Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_template": {
+      "post": {
+        "summary": "Get Template",
+        "description": "Get template by ID. Use mode to control response size: nodes_only (minimal), structure (nodes+connections), full (complete workflow).",
+        "operationId": "tool_get_template_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/get_template_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool Get Template Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/search_templates": {
+      "post": {
+        "summary": "Search Templates",
+        "description": "Search templates with multiple modes. Use searchMode='keyword' for text search, 'by_nodes' to find templates using specific nodes, 'by_task' for curated task-based templates, 'by_metadata' for filtering by complexity/setup time/services, 'patterns' for lightweight workflow pat...",
+        "operationId": "tool_search_templates_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/search_templates_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool Search Templates Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/validate_workflow": {
+      "post": {
+        "summary": "Validate Workflow",
+        "description": "Full workflow validation: structure, connections, expressions, AI tools. Returns errors/warnings/fixes. Essential before deploy.",
+        "operationId": "tool_validate_workflow_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/validate_workflow_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/validate_workflow_response_model"
+                    },
+                    {}
+                  ],
+                  "title": "Response Tool Validate Workflow Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_create_workflow": {
+      "post": {
+        "summary": "N8N Create Workflow",
+        "description": "Create workflow. Requires: name, nodes[], connections{}. Created inactive. Returns workflow with ID.",
+        "operationId": "tool_n8n_create_workflow_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_create_workflow_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Create Workflow Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_get_workflow": {
+      "post": {
+        "summary": "N8N Get Workflow",
+        "description": "Get workflow by ID with different detail levels. n8n has a draft/publish model: the workflow body holds the draft (latest edits); use mode='active' to see the published graph that is actually running. Modes: 'full' (draft + metadata), 'details' (full + execution stats), 'activ...",
+        "operationId": "tool_n8n_get_workflow_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_get_workflow_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Get Workflow Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_update_full_workflow": {
+      "post": {
+        "summary": "N8N Update Full Workflow",
+        "description": "Full workflow update. Requires complete nodes[] and connections{}. For incremental use n8n_update_partial_workflow.",
+        "operationId": "tool_n8n_update_full_workflow_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_update_full_workflow_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Update Full Workflow Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_update_partial_workflow": {
+      "post": {
+        "summary": "N8N Update Partial Workflow",
+        "description": "Update workflow incrementally with diff operations. Types: addNode, removeNode, updateNode, patchNodeField, moveNode, enable/disableNode, addConnection, removeConnection, updateSettings, updateName, add/removeTag, activate/deactivateWorkflow, transferWorkflow. patchNodeField r...",
+        "operationId": "tool_n8n_update_partial_workflow_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_update_partial_workflow_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Update Partial Workflow Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_delete_workflow": {
+      "post": {
+        "summary": "N8N Delete Workflow",
+        "description": "Permanently delete a workflow. This action cannot be undone.",
+        "operationId": "tool_n8n_delete_workflow_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_delete_workflow_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Delete Workflow Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_list_workflows": {
+      "post": {
+        "summary": "N8N List Workflows",
+        "description": "List workflows (minimal metadata only). Returns id/name/active/dates/tags. Check hasMore/nextCursor for pagination.",
+        "operationId": "tool_n8n_list_workflows_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_list_workflows_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N List Workflows Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_validate_workflow": {
+      "post": {
+        "summary": "N8N Validate Workflow",
+        "description": "Validate workflow by ID. Checks nodes, connections, expressions. Returns errors/warnings/suggestions.",
+        "operationId": "tool_n8n_validate_workflow_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_validate_workflow_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Validate Workflow Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_autofix_workflow": {
+      "post": {
+        "summary": "N8N Autofix Workflow",
+        "description": "Automatically fix common workflow validation errors. Preview fixes or apply them. Fixes expression format, typeVersion, error output config, webhook paths, connection structure issues (numeric keys, invalid types, ID-to-name, duplicates, out-of-bounds indices).",
+        "operationId": "tool_n8n_autofix_workflow_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_autofix_workflow_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Autofix Workflow Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_test_workflow": {
+      "post": {
+        "summary": "N8N Test Workflow",
+        "description": "Test/trigger workflow execution. Auto-detects trigger type (webhook/form/chat). Supports: webhook (HTTP), form (fields), chat (message). Note: Only workflows with these trigger types can be executed externally.",
+        "operationId": "tool_n8n_test_workflow_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_test_workflow_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Test Workflow Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_executions": {
+      "post": {
+        "summary": "N8N Executions",
+        "description": "Manage workflow executions: get details, list, or delete. Use action='get' with id for execution details, action='list' for listing executions, action='delete' to remove execution record.",
+        "operationId": "tool_n8n_executions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_executions_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Executions Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_health_check": {
+      "post": {
+        "summary": "N8N Health Check",
+        "description": "Check n8n instance health and API connectivity. Use mode='diagnostic' for detailed troubleshooting with env vars and tool status.",
+        "operationId": "tool_n8n_health_check_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_health_check_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Health Check Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_workflow_versions": {
+      "post": {
+        "summary": "N8N Workflow Versions",
+        "description": "Manage workflow version history, rollback, and cleanup. Six modes:\n- list: Show version history for a workflow\n- get: Get details of specific version\n- rollback: Restore workflow to previous version (creates backup first)\n- delete: Delete specific version or all versions for a...",
+        "operationId": "tool_n8n_workflow_versions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_workflow_versions_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Workflow Versions Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_deploy_template": {
+      "post": {
+        "summary": "N8N Deploy Template",
+        "description": "Deploy a workflow template from n8n.io directly to your n8n instance. Deploys first, then auto-fixes common issues (expression format, typeVersions). Returns workflow ID, required credentials, and fixes applied.",
+        "operationId": "tool_n8n_deploy_template_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_deploy_template_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Deploy Template Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_manage_datatable": {
+      "post": {
+        "summary": "N8N Manage Datatable",
+        "description": "Manage n8n data tables and rows. Actions: createTable, listTables, getTable, updateTable, deleteTable, getRows, insertRows, updateRows, upsertRows, deleteRows.",
+        "operationId": "tool_n8n_manage_datatable_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_manage_datatable_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Manage Datatable Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_manage_credentials": {
+      "post": {
+        "summary": "N8N Manage Credentials",
+        "description": "Manage n8n credentials. Actions: list, get, create, update, delete, getSchema. Use getSchema to discover required fields before creating. SECURITY: credential data values are never logged.",
+        "operationId": "tool_n8n_manage_credentials_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_manage_credentials_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Manage Credentials Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_generate_workflow": {
+      "post": {
+        "summary": "N8N Generate Workflow",
+        "description": "Generate an n8n workflow from a natural language description using AI. Call with just a description to get workflow proposals. Then call again with deploy_id to deploy a chosen proposal, or set skip_cache=true to generate a fresh workflow. Use confirm_deploy=true to deploy a p...",
+        "operationId": "tool_n8n_generate_workflow_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_generate_workflow_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Generate Workflow Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/n8n_audit_instance": {
+      "post": {
+        "summary": "N8N Audit Instance",
+        "description": "Security audit of n8n instance. Combines n8n's built-in audit API (credentials, database, nodes, instance, filesystem risks) with deep workflow scanning (hardcoded secrets via 50+ regex patterns, unauthenticated webhooks, error handling gaps, data retention risks). Returns act...",
+        "operationId": "tool_n8n_audit_instance_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/n8n_audit_instance_form_model"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Tool N8N Audit Instance Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError",
+        "additionalProperties": true
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context",
+            "properties": {},
+            "additionalProperties": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "additionalProperties": true
+      },
+      "get_node_form_model": {
+        "properties": {
+          "nodeType": {
+            "type": "string",
+            "title": "Nodetype",
+            "description": "Full node type: \"nodes-base.httpRequest\" or \"nodes-langchain.agent\""
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail",
+            "description": "Information detail level. standard=essential properties (recommended), full=everything",
+            "default": "standard"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode",
+            "description": "Operation mode. info=node schema, docs=readable markdown documentation, search_properties=find specific properties, versions/compare/breaking/migrations=version info",
+            "default": "info"
+          },
+          "includeTypeInfo": {
+            "type": "boolean",
+            "title": "Includetypeinfo",
+            "description": "Include type structure metadata (type category, JS type, validation rules). Only applies to mode=info. Adds ~80-120 tokens per property.",
+            "default": false
+          },
+          "includeExamples": {
+            "type": "boolean",
+            "title": "Includeexamples",
+            "description": "Include real-world configuration examples from templates. Only applies to mode=info with detail=standard. Adds ~200-400 tokens per example.",
+            "default": false
+          },
+          "fromVersion": {
+            "type": "string",
+            "title": "Fromversion",
+            "description": "Source version for compare/breaking/migrations modes (e.g., \"1.0\")"
+          },
+          "toVersion": {
+            "type": "string",
+            "title": "Toversion",
+            "description": "Target version for compare mode (e.g., \"2.0\"). Defaults to latest if omitted."
+          },
+          "propertyQuery": {
+            "type": "string",
+            "title": "Propertyquery",
+            "description": "For mode=search_properties: search term to find properties (e.g., \"auth\", \"header\", \"body\")"
+          },
+          "maxPropertyResults": {
+            "type": "number",
+            "title": "Maxpropertyresults",
+            "description": "For mode=search_properties: max results (default 20)",
+            "default": 20
+          }
+        },
+        "type": "object",
+        "required": [
+          "nodeType"
+        ],
+        "title": "get_node_form_model",
+        "additionalProperties": true
+      },
+      "get_template_form_model": {
+        "properties": {
+          "templateId": {
+            "type": "number",
+            "title": "Templateid",
+            "description": "The template ID to retrieve"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode",
+            "description": "Response detail level. nodes_only: just node list, structure: nodes+connections, full: complete workflow JSON.",
+            "default": "full"
+          }
+        },
+        "type": "object",
+        "required": [
+          "templateId"
+        ],
+        "title": "get_template_form_model",
+        "additionalProperties": true
+      },
+      "n8n_audit_instance_form_model": {
+        "properties": {
+          "categories": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Categories",
+            "description": "Built-in audit categories to check (default: all 5)"
+          },
+          "includeCustomScan": {
+            "type": "boolean",
+            "title": "Includecustomscan",
+            "description": "Run deep workflow scanning for secrets, webhooks, error handling (default: true)"
+          },
+          "daysAbandonedWorkflow": {
+            "type": "number",
+            "title": "Daysabandonedworkflow",
+            "description": "Days threshold for abandoned workflow detection (default: 90)"
+          },
+          "customChecks": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Customchecks",
+            "description": "Specific custom checks to run (default: all 4)"
+          }
+        },
+        "type": "object",
+        "title": "n8n_audit_instance_form_model",
+        "additionalProperties": true
+      },
+      "n8n_autofix_workflow_form_model": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Workflow ID to fix"
+          },
+          "applyFixes": {
+            "type": "boolean",
+            "title": "Applyfixes",
+            "description": "Apply fixes to workflow (default: false - preview mode)"
+          },
+          "fixTypes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fixtypes",
+            "description": "Types of fixes to apply (default: all)"
+          },
+          "confidenceThreshold": {
+            "type": "string",
+            "title": "Confidencethreshold",
+            "description": "Minimum confidence level for fixes (default: medium)"
+          },
+          "maxFixes": {
+            "type": "number",
+            "title": "Maxfixes",
+            "description": "Maximum number of fixes to apply (default: 50)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "n8n_autofix_workflow_form_model",
+        "additionalProperties": true
+      },
+      "n8n_create_workflow_form_model": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Workflow name (required)"
+          },
+          "nodes": {
+            "items": {
+              "$ref": "#/components/schemas/n8n_create_workflow_form_model_nodes_item_model"
+            },
+            "type": "array",
+            "title": "Nodes",
+            "description": "Array of workflow nodes. Each node must have: id, name, type, typeVersion, position, and parameters"
+          },
+          "connections": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Connections",
+            "description": "Workflow connections object. Keys are source node names (the name field, not id), values define output connections",
+            "properties": {}
+          },
+          "settings": {
+            "$ref": "#/components/schemas/n8n_create_workflow_form_model_settings_model",
+            "description": "Optional workflow settings (execution order, timezone, error handling)"
+          },
+          "projectId": {
+            "type": "string",
+            "title": "Projectid",
+            "description": "Optional project ID to create the workflow in (enterprise feature)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "nodes",
+          "connections"
+        ],
+        "title": "n8n_create_workflow_form_model",
+        "additionalProperties": true
+      },
+      "n8n_create_workflow_form_model_nodes_item_model": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": ""
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": ""
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "description": ""
+          },
+          "typeVersion": {
+            "type": "number",
+            "title": "Typeversion",
+            "description": ""
+          },
+          "position": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Position",
+            "description": ""
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Parameters",
+            "description": "",
+            "properties": {}
+          },
+          "credentials": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Credentials",
+            "description": "",
+            "properties": {}
+          },
+          "disabled": {
+            "type": "boolean",
+            "title": "Disabled",
+            "description": ""
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes",
+            "description": ""
+          },
+          "continueOnFail": {
+            "type": "boolean",
+            "title": "Continueonfail",
+            "description": ""
+          },
+          "retryOnFail": {
+            "type": "boolean",
+            "title": "Retryonfail",
+            "description": ""
+          },
+          "maxTries": {
+            "type": "number",
+            "title": "Maxtries",
+            "description": ""
+          },
+          "waitBetweenTries": {
+            "type": "number",
+            "title": "Waitbetweentries",
+            "description": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "type",
+          "typeVersion",
+          "position",
+          "parameters"
+        ],
+        "title": "n8n_create_workflow_form_model_nodes_item_model",
+        "additionalProperties": true
+      },
+      "n8n_create_workflow_form_model_settings_model": {
+        "properties": {
+          "executionOrder": {
+            "type": "string",
+            "title": "Executionorder",
+            "description": ""
+          },
+          "timezone": {
+            "type": "string",
+            "title": "Timezone",
+            "description": ""
+          },
+          "saveDataErrorExecution": {
+            "type": "string",
+            "title": "Savedataerrorexecution",
+            "description": ""
+          },
+          "saveDataSuccessExecution": {
+            "type": "string",
+            "title": "Savedatasuccessexecution",
+            "description": ""
+          },
+          "saveManualExecutions": {
+            "type": "boolean",
+            "title": "Savemanualexecutions",
+            "description": ""
+          },
+          "saveExecutionProgress": {
+            "type": "boolean",
+            "title": "Saveexecutionprogress",
+            "description": ""
+          },
+          "executionTimeout": {
+            "type": "number",
+            "title": "Executiontimeout",
+            "description": ""
+          },
+          "errorWorkflow": {
+            "type": "string",
+            "title": "Errorworkflow",
+            "description": ""
+          }
+        },
+        "type": "object",
+        "title": "n8n_create_workflow_form_model_settings_model",
+        "additionalProperties": true
+      },
+      "n8n_delete_workflow_form_model": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Workflow ID to delete"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "n8n_delete_workflow_form_model",
+        "additionalProperties": true
+      },
+      "n8n_deploy_template_form_model": {
+        "properties": {
+          "templateId": {
+            "type": "number",
+            "title": "Templateid",
+            "description": "Template ID from n8n.io (required)"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Custom workflow name (default: template name)"
+          },
+          "autoUpgradeVersions": {
+            "type": "boolean",
+            "title": "Autoupgradeversions",
+            "description": "Automatically upgrade node typeVersions to latest supported (default: true)",
+            "default": true
+          },
+          "autoFix": {
+            "type": "boolean",
+            "title": "Autofix",
+            "description": "Auto-apply fixes after deployment for expression format issues, missing = prefix, etc. (default: true)",
+            "default": true
+          },
+          "stripCredentials": {
+            "type": "boolean",
+            "title": "Stripcredentials",
+            "description": "Remove credential references from nodes - user configures in n8n UI (default: true)",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "templateId"
+        ],
+        "title": "n8n_deploy_template_form_model",
+        "additionalProperties": true
+      },
+      "n8n_executions_form_model": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "title": "Action",
+            "description": "Operation: get=get execution details, list=list executions, delete=delete execution"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Execution ID (required for action=get or action=delete)"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode",
+            "description": "For action=get: preview=structure only, summary=2 items (default), filtered=custom, full=all data, error=optimized error debugging"
+          },
+          "nodeNames": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Nodenames",
+            "description": "For action=get with mode=filtered: filter to specific nodes by name"
+          },
+          "itemsLimit": {
+            "type": "number",
+            "title": "Itemslimit",
+            "description": "For action=get with mode=filtered: items per node (0=structure, 2=default, -1=unlimited)"
+          },
+          "includeInputData": {
+            "type": "boolean",
+            "title": "Includeinputdata",
+            "description": "For action=get: include input data in addition to output (default: false)"
+          },
+          "errorItemsLimit": {
+            "type": "number",
+            "title": "Erroritemslimit",
+            "description": "For action=get with mode=error: sample items from upstream node (default: 2, max: 100)"
+          },
+          "includeStackTrace": {
+            "type": "boolean",
+            "title": "Includestacktrace",
+            "description": "For action=get with mode=error: include full stack trace (default: false, shows truncated)"
+          },
+          "includeExecutionPath": {
+            "type": "boolean",
+            "title": "Includeexecutionpath",
+            "description": "For action=get with mode=error: include execution path leading to error (default: true)"
+          },
+          "fetchWorkflow": {
+            "type": "boolean",
+            "title": "Fetchworkflow",
+            "description": "For action=get with mode=error: fetch workflow for accurate upstream detection (default: true)"
+          },
+          "limit": {
+            "type": "number",
+            "title": "Limit",
+            "description": "For action=list: number of executions to return (1-100, default: 100)"
+          },
+          "cursor": {
+            "type": "string",
+            "title": "Cursor",
+            "description": "For action=list: pagination cursor from previous response"
+          },
+          "workflowId": {
+            "type": "string",
+            "title": "Workflowid",
+            "description": "For action=list: filter by workflow ID"
+          },
+          "projectId": {
+            "type": "string",
+            "title": "Projectid",
+            "description": "For action=list: filter by project ID (enterprise feature)"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "For action=list: filter by execution status"
+          },
+          "includeData": {
+            "type": "boolean",
+            "title": "Includedata",
+            "description": "For action=list: include execution data (default: false)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "title": "n8n_executions_form_model",
+        "additionalProperties": true
+      },
+      "n8n_generate_workflow_form_model": {
+        "properties": {
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Clear description of what the workflow should do. Include: trigger type (webhook, schedule, manual), services to integrate (Slack, Gmail, etc.), and the logic/flow."
+          },
+          "skip_cache": {
+            "type": "boolean",
+            "title": "Skip Cache",
+            "description": "Set to true to skip proposals and generate a fresh workflow from scratch. Returns a preview — call again with confirm_deploy=true to deploy it."
+          },
+          "deploy_id": {
+            "type": "string",
+            "title": "Deploy Id",
+            "description": "ID of a proposal to deploy. Get proposal IDs from a previous call that returned status \"proposals\"."
+          },
+          "confirm_deploy": {
+            "type": "boolean",
+            "title": "Confirm Deploy",
+            "description": "Set to true to deploy the workflow from the last generation preview."
+          }
+        },
+        "type": "object",
+        "required": [
+          "description"
+        ],
+        "title": "n8n_generate_workflow_form_model",
+        "additionalProperties": true
+      },
+      "n8n_get_workflow_form_model": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Workflow ID"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode",
+            "description": "Detail level: full=draft + metadata (activeVersionId pointer kept, heavy activeVersion payload stripped), details=full+execution stats, active=published graph (errors if workflow has no live version), structure=nodes/connections topology, minimal=metadata only",
+            "default": "full"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "n8n_get_workflow_form_model",
+        "additionalProperties": true
+      },
+      "n8n_health_check_form_model": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "title": "Mode",
+            "description": "Mode: \"status\" (default) for quick health check, \"diagnostic\" for detailed debug info including env vars and tool status",
+            "default": "status"
+          },
+          "verbose": {
+            "type": "boolean",
+            "title": "Verbose",
+            "description": "Include extra details in diagnostic mode (default: false)"
+          }
+        },
+        "type": "object",
+        "title": "n8n_health_check_form_model",
+        "additionalProperties": true
+      },
+      "n8n_list_workflows_form_model": {
+        "properties": {
+          "limit": {
+            "type": "number",
+            "title": "Limit",
+            "description": "Number of workflows to return (1-100, default: 100)"
+          },
+          "cursor": {
+            "type": "string",
+            "title": "Cursor",
+            "description": "Pagination cursor from previous response"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active",
+            "description": "Filter by active status"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tags",
+            "description": "Filter by tags (exact match)"
+          },
+          "projectId": {
+            "type": "string",
+            "title": "Projectid",
+            "description": "Filter by project ID (enterprise feature)"
+          },
+          "excludePinnedData": {
+            "type": "boolean",
+            "title": "Excludepinneddata",
+            "description": "Exclude pinned data from response (default: true)"
+          }
+        },
+        "type": "object",
+        "title": "n8n_list_workflows_form_model",
+        "additionalProperties": true
+      },
+      "n8n_manage_credentials_form_model": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "title": "Action",
+            "description": "Action to perform"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Credential ID (required for get, update, delete)"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Credential name (required for create)"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "description": "Credential type e.g. httpHeaderAuth, httpBasicAuth, oAuth2Api (required for create, getSchema)"
+          },
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data",
+            "description": "Credential data fields - use getSchema to discover required fields (required for create, optional for update)",
+            "properties": {}
+          },
+          "includeUsage": {
+            "type": "boolean",
+            "title": "Includeusage",
+            "description": "For list/get: also return workflows that reference each credential (id, name, active). Triggers a full workflow scan, slower on large instances. Default: false."
+          }
+        },
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "title": "n8n_manage_credentials_form_model",
+        "additionalProperties": true
+      },
+      "n8n_manage_datatable_form_model": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "title": "Action",
+            "description": "Operation to perform"
+          },
+          "tableId": {
+            "type": "string",
+            "title": "Tableid",
+            "description": "Data table ID (required for all actions except createTable and listTables)"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "For createTable: table name. For updateTable: new name (rename only — schema is immutable after creation)"
+          },
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/n8n_manage_datatable_form_model_columns_item_model"
+            },
+            "type": "array",
+            "title": "Columns",
+            "description": "For createTable (required, at least one): column definitions. Schema is immutable after creation via public API."
+          },
+          "data": {
+            "title": "Data",
+            "description": "For insertRows: array of row objects. For updateRows/upsertRows: object with column values."
+          },
+          "filter": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Filter",
+            "description": "For getRows/updateRows/upsertRows/deleteRows: {type?: \"and\"|\"or\", filters: [{columnName, condition, value}]}",
+            "properties": {}
+          },
+          "limit": {
+            "type": "number",
+            "title": "Limit",
+            "description": "For listTables/getRows: max results (1-100)"
+          },
+          "cursor": {
+            "type": "string",
+            "title": "Cursor",
+            "description": "For listTables/getRows: pagination cursor"
+          },
+          "sortBy": {
+            "type": "string",
+            "title": "Sortby",
+            "description": "For getRows: \"columnName:asc\" or \"columnName:desc\""
+          },
+          "search": {
+            "type": "string",
+            "title": "Search",
+            "description": "For getRows: text search across string columns"
+          },
+          "returnType": {
+            "type": "string",
+            "title": "Returntype",
+            "description": "For insertRows: what to return (default: count)"
+          },
+          "returnData": {
+            "type": "boolean",
+            "title": "Returndata",
+            "description": "For updateRows/upsertRows/deleteRows: return affected rows (default: false)"
+          },
+          "dryRun": {
+            "type": "boolean",
+            "title": "Dryrun",
+            "description": "For updateRows/upsertRows/deleteRows: preview without applying (default: false)"
+          },
+          "projectId": {
+            "type": "string",
+            "title": "Projectid",
+            "description": "For createTable: project ID to create the table in. If omitted, uses the default project."
+          }
+        },
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "title": "n8n_manage_datatable_form_model",
+        "additionalProperties": true
+      },
+      "n8n_manage_datatable_form_model_columns_item_model": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": ""
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "description": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "n8n_manage_datatable_form_model_columns_item_model",
+        "additionalProperties": true
+      },
+      "n8n_test_workflow_form_model": {
+        "properties": {
+          "workflowId": {
+            "type": "string",
+            "title": "Workflowid",
+            "description": "Workflow ID to execute (required)"
+          },
+          "triggerType": {
+            "type": "string",
+            "title": "Triggertype",
+            "description": "Trigger type. Auto-detected if not specified. Workflow must have a matching trigger node."
+          },
+          "httpMethod": {
+            "type": "string",
+            "title": "Httpmethod",
+            "description": "For webhook: HTTP method (default: from workflow config or POST)"
+          },
+          "webhookPath": {
+            "type": "string",
+            "title": "Webhookpath",
+            "description": "For webhook: override the webhook path"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "For chat: message to send (required for chat triggers)"
+          },
+          "sessionId": {
+            "type": "string",
+            "title": "Sessionid",
+            "description": "For chat: session ID for conversation continuity"
+          },
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data",
+            "description": "Input data/payload for webhook, form fields, or execution data",
+            "properties": {}
+          },
+          "headers": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Headers",
+            "description": "Custom HTTP headers",
+            "properties": {}
+          },
+          "timeout": {
+            "type": "number",
+            "title": "Timeout",
+            "description": "Timeout in ms (default: 120000)"
+          },
+          "waitForResponse": {
+            "type": "boolean",
+            "title": "Waitforresponse",
+            "description": "Wait for workflow completion (default: true)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "workflowId"
+        ],
+        "title": "n8n_test_workflow_form_model",
+        "additionalProperties": true
+      },
+      "n8n_update_full_workflow_form_model": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Workflow ID to update"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "New workflow name"
+          },
+          "nodes": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object",
+              "properties": {}
+            },
+            "type": "array",
+            "title": "Nodes",
+            "description": "Complete array of workflow nodes (required if modifying workflow structure)"
+          },
+          "connections": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Connections",
+            "description": "Complete connections object (required if modifying workflow structure)",
+            "properties": {}
+          },
+          "settings": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Settings",
+            "description": "Workflow settings to update",
+            "properties": {}
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "n8n_update_full_workflow_form_model",
+        "additionalProperties": true
+      },
+      "n8n_update_partial_workflow_form_model": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Workflow ID to update"
+          },
+          "operations": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object",
+              "properties": {}
+            },
+            "type": "array",
+            "title": "Operations",
+            "description": "Array of diff operations to apply. Each operation must have a \"type\" field and relevant properties for that operation type."
+          },
+          "validateOnly": {
+            "type": "boolean",
+            "title": "Validateonly",
+            "description": "If true, only validate operations without applying them"
+          },
+          "continueOnError": {
+            "type": "boolean",
+            "title": "Continueonerror",
+            "description": "If true, apply valid operations even if some fail (best-effort mode). Returns applied and failed operation indices. Default: false (atomic)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "operations"
+        ],
+        "title": "n8n_update_partial_workflow_form_model",
+        "additionalProperties": true
+      },
+      "n8n_validate_workflow_form_model": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Workflow ID to validate"
+          },
+          "options": {
+            "$ref": "#/components/schemas/n8n_validate_workflow_form_model_options_model",
+            "description": "Validation options"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "n8n_validate_workflow_form_model",
+        "additionalProperties": true
+      },
+      "n8n_validate_workflow_form_model_options_model": {
+        "properties": {
+          "validateNodes": {
+            "type": "boolean",
+            "title": "Validatenodes",
+            "description": "Validate node configurations (default: true)"
+          },
+          "validateConnections": {
+            "type": "boolean",
+            "title": "Validateconnections",
+            "description": "Validate workflow connections (default: true)"
+          },
+          "validateExpressions": {
+            "type": "boolean",
+            "title": "Validateexpressions",
+            "description": "Validate n8n expressions (default: true)"
+          },
+          "profile": {
+            "type": "string",
+            "title": "Profile",
+            "description": "Validation profile to use (default: runtime)"
+          }
+        },
+        "type": "object",
+        "title": "n8n_validate_workflow_form_model_options_model",
+        "additionalProperties": true
+      },
+      "n8n_workflow_versions_form_model": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "title": "Mode",
+            "description": "Operation mode"
+          },
+          "workflowId": {
+            "type": "string",
+            "title": "Workflowid",
+            "description": "Workflow ID (required for list, rollback, delete, prune)"
+          },
+          "versionId": {
+            "type": "number",
+            "title": "Versionid",
+            "description": "Version ID (required for get mode and single version delete, optional for rollback)"
+          },
+          "limit": {
+            "type": "number",
+            "title": "Limit",
+            "description": "Max versions to return in list mode",
+            "default": 10
+          },
+          "validateBefore": {
+            "type": "boolean",
+            "title": "Validatebefore",
+            "description": "Validate workflow structure before rollback",
+            "default": true
+          },
+          "deleteAll": {
+            "type": "boolean",
+            "title": "Deleteall",
+            "description": "Delete all versions for workflow (delete mode only)",
+            "default": false
+          },
+          "maxVersions": {
+            "type": "number",
+            "title": "Maxversions",
+            "description": "Keep N most recent versions (prune mode only)",
+            "default": 10
+          },
+          "confirmTruncate": {
+            "type": "boolean",
+            "title": "Confirmtruncate",
+            "description": "REQUIRED: Must be true to truncate all versions (truncate mode only)",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "mode"
+        ],
+        "title": "n8n_workflow_versions_form_model",
+        "additionalProperties": true
+      },
+      "search_nodes_form_model": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "description": "Search terms. Use quotes for exact phrase."
+          },
+          "limit": {
+            "type": "number",
+            "title": "Limit",
+            "description": "Max results (default 20)",
+            "default": 20
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode",
+            "description": "OR=any word, AND=all words, FUZZY=typo-tolerant",
+            "default": "OR"
+          },
+          "includeExamples": {
+            "type": "boolean",
+            "title": "Includeexamples",
+            "description": "Include top 2 real-world configuration examples from popular templates (default: false)",
+            "default": false
+          },
+          "includeOperations": {
+            "type": "boolean",
+            "title": "Includeoperations",
+            "description": "Include resource/operation tree per node. Adds ~100-300 tokens per result but saves a get_node round-trip.",
+            "default": false
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "description": "Filter by node source: all=everything (default), core=n8n base nodes, community=community nodes, verified=verified community nodes only",
+            "default": "all"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "title": "search_nodes_form_model",
+        "additionalProperties": true
+      },
+      "search_templates_form_model": {
+        "properties": {
+          "searchMode": {
+            "type": "string",
+            "title": "Searchmode",
+            "description": "Search mode. keyword=text search (default), by_nodes=find by node types, by_task=curated task templates, by_metadata=filter by complexity/services, patterns=lightweight workflow pattern summaries",
+            "default": "keyword"
+          },
+          "query": {
+            "type": "string",
+            "title": "Query",
+            "description": "For searchMode=keyword: search keyword (e.g., \"chatbot\")"
+          },
+          "fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fields",
+            "description": "For searchMode=keyword: fields to include in response. Default: all fields."
+          },
+          "nodeTypes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Nodetypes",
+            "description": "For searchMode=by_nodes: array of node types (e.g., [\"n8n-nodes-base.httpRequest\", \"n8n-nodes-base.slack\"])"
+          },
+          "task": {
+            "type": "string",
+            "title": "Task",
+            "description": "For searchMode=by_task: the type of task. For searchMode=patterns: optional category filter (omit for overview of all categories)."
+          },
+          "category": {
+            "type": "string",
+            "title": "Category",
+            "description": "For searchMode=by_metadata: filter by category (e.g., \"automation\", \"integration\")"
+          },
+          "complexity": {
+            "type": "string",
+            "title": "Complexity",
+            "description": "For searchMode=by_metadata: filter by complexity level"
+          },
+          "maxSetupMinutes": {
+            "type": "number",
+            "title": "Maxsetupminutes",
+            "description": "For searchMode=by_metadata: maximum setup time in minutes"
+          },
+          "minSetupMinutes": {
+            "type": "number",
+            "title": "Minsetupminutes",
+            "description": "For searchMode=by_metadata: minimum setup time in minutes"
+          },
+          "requiredService": {
+            "type": "string",
+            "title": "Requiredservice",
+            "description": "For searchMode=by_metadata: filter by required service (e.g., \"openai\", \"slack\")"
+          },
+          "targetAudience": {
+            "type": "string",
+            "title": "Targetaudience",
+            "description": "For searchMode=by_metadata: filter by target audience (e.g., \"developers\", \"marketers\")"
+          },
+          "limit": {
+            "type": "number",
+            "title": "Limit",
+            "description": "Maximum number of results. Default 20.",
+            "default": 20
+          },
+          "offset": {
+            "type": "number",
+            "title": "Offset",
+            "description": "Pagination offset. Default 0.",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "search_templates_form_model",
+        "additionalProperties": true
+      },
+      "tools_documentation_form_model": {
+        "properties": {
+          "topic": {
+            "type": "string",
+            "title": "Topic",
+            "description": "Tool name (e.g., \"search_nodes\") or \"overview\" for general guide. Leave empty for quick reference."
+          },
+          "depth": {
+            "type": "string",
+            "title": "Depth",
+            "description": "Level of detail. \"essentials\" (default) for quick reference, \"full\" for comprehensive docs.",
+            "default": "essentials"
+          }
+        },
+        "type": "object",
+        "title": "tools_documentation_form_model",
+        "additionalProperties": true
+      },
+      "validate_node_form_model": {
+        "properties": {
+          "nodeType": {
+            "type": "string",
+            "title": "Nodetype",
+            "description": "Node type as string. Example: \"nodes-base.slack\""
+          },
+          "config": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Config",
+            "description": "Configuration as object. For simple nodes use {}. For complex nodes include fields like {resource:\"channel\",operation:\"create\"}",
+            "properties": {}
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode",
+            "description": "Validation mode. full=comprehensive validation with errors/warnings/suggestions, minimal=quick required fields check only. Default is \"full\"",
+            "default": "full"
+          },
+          "profile": {
+            "type": "string",
+            "title": "Profile",
+            "description": "Profile for mode=full: \"minimal\", \"runtime\", \"ai-friendly\", or \"strict\". Default is \"ai-friendly\"",
+            "default": "ai-friendly"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nodeType",
+          "config"
+        ],
+        "title": "validate_node_form_model",
+        "additionalProperties": true
+      },
+      "validate_node_response_model": {
+        "properties": {
+          "nodeType": {
+            "type": "string",
+            "title": "Nodetype",
+            "description": ""
+          },
+          "workflowNodeType": {
+            "type": "string",
+            "title": "Workflownodetype",
+            "description": ""
+          },
+          "displayName": {
+            "type": "string",
+            "title": "Displayname",
+            "description": ""
+          },
+          "valid": {
+            "type": "boolean",
+            "title": "Valid",
+            "description": ""
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/validate_node_response_model_errors_item_model"
+            },
+            "type": "array",
+            "title": "Errors",
+            "description": ""
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/validate_node_response_model_warnings_item_model"
+            },
+            "type": "array",
+            "title": "Warnings",
+            "description": ""
+          },
+          "suggestions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Suggestions",
+            "description": ""
+          },
+          "missingRequiredFields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Missingrequiredfields",
+            "description": "Only present in mode=minimal"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/validate_node_response_model_summary_model",
+            "description": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "nodeType",
+          "displayName",
+          "valid"
+        ],
+        "title": "validate_node_response_model",
+        "additionalProperties": true
+      },
+      "validate_node_response_model_errors_item_model": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "description": ""
+          },
+          "property": {
+            "type": "string",
+            "title": "Property",
+            "description": ""
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": ""
+          },
+          "fix": {
+            "type": "string",
+            "title": "Fix",
+            "description": ""
+          }
+        },
+        "type": "object",
+        "title": "validate_node_response_model_errors_item_model",
+        "additionalProperties": true
+      },
+      "validate_node_response_model_summary_model": {
+        "properties": {
+          "hasErrors": {
+            "type": "boolean",
+            "title": "Haserrors",
+            "description": ""
+          },
+          "errorCount": {
+            "type": "number",
+            "title": "Errorcount",
+            "description": ""
+          },
+          "warningCount": {
+            "type": "number",
+            "title": "Warningcount",
+            "description": ""
+          },
+          "suggestionCount": {
+            "type": "number",
+            "title": "Suggestioncount",
+            "description": ""
+          }
+        },
+        "type": "object",
+        "title": "validate_node_response_model_summary_model",
+        "additionalProperties": true
+      },
+      "validate_node_response_model_warnings_item_model": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "description": ""
+          },
+          "property": {
+            "type": "string",
+            "title": "Property",
+            "description": ""
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": ""
+          },
+          "suggestion": {
+            "type": "string",
+            "title": "Suggestion",
+            "description": ""
+          }
+        },
+        "type": "object",
+        "title": "validate_node_response_model_warnings_item_model",
+        "additionalProperties": true
+      },
+      "validate_workflow_form_model": {
+        "properties": {
+          "workflow": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Workflow",
+            "description": "The complete workflow JSON to validate. Must include nodes array and connections object.",
+            "properties": {}
+          },
+          "options": {
+            "$ref": "#/components/schemas/validate_workflow_form_model_options_model",
+            "description": "Optional validation settings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "workflow"
+        ],
+        "title": "validate_workflow_form_model",
+        "additionalProperties": true
+      },
+      "validate_workflow_form_model_options_model": {
+        "properties": {
+          "validateNodes": {
+            "type": "boolean",
+            "title": "Validatenodes",
+            "description": "Validate individual node configurations. Default true.",
+            "default": true
+          },
+          "validateConnections": {
+            "type": "boolean",
+            "title": "Validateconnections",
+            "description": "Validate node connections and flow. Default true.",
+            "default": true
+          },
+          "validateExpressions": {
+            "type": "boolean",
+            "title": "Validateexpressions",
+            "description": "Validate n8n expressions syntax and references. Default true.",
+            "default": true
+          },
+          "profile": {
+            "type": "string",
+            "title": "Profile",
+            "description": "Validation profile for node validation. Default \"runtime\".",
+            "default": "runtime"
+          }
+        },
+        "type": "object",
+        "title": "validate_workflow_form_model_options_model",
+        "additionalProperties": true
+      },
+      "validate_workflow_response_model": {
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "title": "Valid",
+            "description": ""
+          },
+          "summary": {
+            "$ref": "#/components/schemas/validate_workflow_response_model_summary_model",
+            "description": ""
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/validate_workflow_response_model_errors_item_model"
+            },
+            "type": "array",
+            "title": "Errors",
+            "description": ""
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/validate_workflow_response_model_warnings_item_model"
+            },
+            "type": "array",
+            "title": "Warnings",
+            "description": ""
+          },
+          "suggestions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Suggestions",
+            "description": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "valid",
+          "summary"
+        ],
+        "title": "validate_workflow_response_model",
+        "additionalProperties": true
+      },
+      "validate_workflow_response_model_errors_item_model": {
+        "properties": {
+          "node": {
+            "type": "string",
+            "title": "Node",
+            "description": ""
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": ""
+          },
+          "details": {
+            "type": "string",
+            "title": "Details",
+            "description": ""
+          }
+        },
+        "type": "object",
+        "title": "validate_workflow_response_model_errors_item_model",
+        "additionalProperties": true
+      },
+      "validate_workflow_response_model_summary_model": {
+        "properties": {
+          "totalNodes": {
+            "type": "number",
+            "title": "Totalnodes",
+            "description": ""
+          },
+          "enabledNodes": {
+            "type": "number",
+            "title": "Enablednodes",
+            "description": ""
+          },
+          "triggerNodes": {
+            "type": "number",
+            "title": "Triggernodes",
+            "description": ""
+          },
+          "validConnections": {
+            "type": "number",
+            "title": "Validconnections",
+            "description": ""
+          },
+          "invalidConnections": {
+            "type": "number",
+            "title": "Invalidconnections",
+            "description": ""
+          },
+          "expressionsValidated": {
+            "type": "number",
+            "title": "Expressionsvalidated",
+            "description": ""
+          },
+          "errorCount": {
+            "type": "number",
+            "title": "Errorcount",
+            "description": ""
+          },
+          "warningCount": {
+            "type": "number",
+            "title": "Warningcount",
+            "description": ""
+          }
+        },
+        "type": "object",
+        "title": "validate_workflow_response_model_summary_model",
+        "additionalProperties": true
+      },
+      "validate_workflow_response_model_warnings_item_model": {
+        "properties": {
+          "node": {
+            "type": "string",
+            "title": "Node",
+            "description": ""
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": ""
+          },
+          "details": {
+            "type": "string",
+            "title": "Details",
+            "description": ""
+          }
+        },
+        "type": "object",
+        "title": "validate_workflow_response_model_warnings_item_model",
+        "additionalProperties": true
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://n8n-control-mcp-production.up.railway.app"
+    }
+  ]
+}

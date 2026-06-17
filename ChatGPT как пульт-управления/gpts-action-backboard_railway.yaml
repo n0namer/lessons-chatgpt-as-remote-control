@@ -1,0 +1,195 @@
+openapi: 3.1.0
+
+info:
+  title: Railway GraphQL Control API
+  version: 1.0.0
+  description: >
+    Minimal Railway Public GraphQL API wrapper for ChatGPT Actions.
+    Use for Railway project/environment/service/domain automation.
+    This action sends GraphQL queries and mutations to Railway's public API.
+
+servers:
+  - url: https://backboard.railway.com
+    description: Railway Public GraphQL API
+
+security:
+  - RailwayProjectToken: []
+
+paths:
+  /graphql/v2:
+    post:
+      operationId: railway_graphql
+      summary: Execute Railway GraphQL query or mutation
+      description: >
+        Executes a Railway GraphQL query or mutation. Use this for Railway project,
+        service, environment, variable, deployment, and domain operations.
+        Mutations can change Railway infrastructure, so this action is consequential.
+      tags:
+        - railway
+      x-openai-isConsequential: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GraphQLRequest"
+            examples:
+              getProjectTokenInfo:
+                summary: Get project token info
+                value:
+                  query: |
+                    query {
+                      projectToken {
+                        projectId
+                        environmentId
+                      }
+                    }
+                  variables: {}
+              listServiceDomains:
+                summary: List domains for a service
+                value:
+                  query: |
+                    query ServiceDomains($serviceId: String!, $environmentId: String!) {
+                      domains(serviceId: $serviceId, environmentId: $environmentId) {
+                        serviceDomains {
+                          id
+                          domain
+                          targetPort
+                        }
+                        customDomains {
+                          id
+                          domain
+                        }
+                      }
+                    }
+                  variables:
+                    serviceId: "SERVICE_ID_HERE"
+                    environmentId: "ENVIRONMENT_ID_HERE"
+              createRailwayServiceDomain:
+                summary: Create Railway-provided service domain
+                value:
+                  query: |
+                    mutation CreateServiceDomain($input: ServiceDomainCreateInput!) {
+                      serviceDomainCreate(input: $input) {
+                        id
+                        domain
+                        targetPort
+                      }
+                    }
+                  variables:
+                    input:
+                      serviceId: "SERVICE_ID_HERE"
+                      environmentId: "ENVIRONMENT_ID_HERE"
+      responses:
+        "200":
+          description: GraphQL response from Railway.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GraphQLResponse"
+        "400":
+          description: Bad request or invalid GraphQL document.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GraphQLResponse"
+        "401":
+          description: Unauthorized or invalid Railway token.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GraphQLResponse"
+        "403":
+          description: Forbidden or token lacks access to the requested Railway resource.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GraphQLResponse"
+
+components:
+  securitySchemes:
+    RailwayProjectToken:
+      type: apiKey
+      in: header
+      name: Project-Access-Token
+
+  schemas:
+    GraphQLRequest:
+      type: object
+      description: Railway GraphQL request body.
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          minLength: 1
+          description: GraphQL query or mutation string.
+        variables:
+          type: object
+          description: Variables object for the GraphQL operation.
+          properties:
+            input:
+              description: Optional GraphQL input object.
+            projectId:
+              type: string
+            environmentId:
+              type: string
+            serviceId:
+              type: string
+            deploymentId:
+              type: string
+            domainId:
+              type: string
+          additionalProperties: true
+        operationName:
+          type: string
+          description: Optional GraphQL operation name.
+      additionalProperties: false
+
+    GraphQLResponse:
+      type: object
+      description: Standard GraphQL response.
+      properties:
+        data:
+          type: object
+          description: GraphQL response data.
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            projectId:
+              type: string
+            environmentId:
+              type: string
+            serviceId:
+              type: string
+          additionalProperties: true
+        errors:
+          type: array
+          description: GraphQL errors, if any.
+          items:
+            $ref: "#/components/schemas/GraphQLError"
+      additionalProperties: true
+
+    GraphQLError:
+      type: object
+      description: GraphQL error object.
+      properties:
+        message:
+          type: string
+        path:
+          type: array
+          items:
+            type: string
+        extensions:
+          type: object
+          properties:
+            code:
+              type: string
+          additionalProperties: true
+      additionalProperties: true
+
+tags:
+  - name: railway
+    description: Railway Public GraphQL API.
