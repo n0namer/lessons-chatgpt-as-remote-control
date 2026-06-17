@@ -1,0 +1,23 @@
+flowchart LR
+    U[Пользователь] --> GPT[Custom GPT / GPTS]
+    GPT -->|GPT Actions: HTTPS + Bearer bridge token| MCPO[mcpo / OpenAPI REST фасад на Railway]
+    MCPO -->|MCP tool calls| N8NMCP[n8n-mcp / приватный backend]
+    N8NMCP -->|X-N8N-API-KEY из Railway env| N8N[n8n instance на Railway]
+    N8N --> WF[n8n workflows]
+
+    GPT -. Railway Action: Bearer Railway token .-> RAILWAY[Railway API / GraphQL]
+    RAILWAY -. deploy/read logs/env names .-> MCPO
+    RAILWAY -. deploy/read logs/env names .-> N8NMCP
+
+    subgraph Secrets[Разные ключи, не путать]
+      RK[Railway API token]
+      BT[Bridge token: MCP_AUTH_TOKEN/AUTH_TOKEN]
+      NK[n8n API key: N8N_API_KEY]
+    end
+
+    RK -. только для GPT Action к Railway .-> RAILWAY
+    BT -. только для внешнего входа GPT Action в bridge .-> MCPO
+    NK -. только server-side в Railway env .-> N8NMCP
+
+    classDef secret fill:#fff3cd,stroke:#d39e00,color:#000;
+    class RK,BT,NK secret;
