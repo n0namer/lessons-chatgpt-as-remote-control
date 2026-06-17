@@ -17,7 +17,7 @@ flowchart LR
 ```
 
 Keys:
-- Railway API / Project token: created in Railway, inserted into GPT Action auth.
+- Railway Account/Workspace API token: created in Railway Account Settings → Tokens, inserted into GPT Action auth as Bearer.
 - Service variables/secrets: stored only in Railway service Variables.
 
 Read-only:
