@@ -108,10 +108,11 @@ paths:
 
 components:
   securitySchemes:
-    RailwayProjectToken:
-      type: apiKey
-      in: header
-      name: Project-Access-Token
+    RailwayBearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Railway API token
+      description: Railway Account/Workspace API token. GPT Actions sends it as Authorization: Bearer <token>.
 
   schemas:
     GraphQLRequest:
